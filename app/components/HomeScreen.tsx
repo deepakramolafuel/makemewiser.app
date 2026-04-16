@@ -14,7 +14,7 @@ import type { LessonResponse } from "@/lib/types";
 
 type View = "home" | "travelling" | "lesson" | "submit";
 
-const MIN_TRAVEL_DURATION = 2800; // minimum ms to show travel animation
+const MIN_TRAVEL_DURATION = 4500; // minimum ms to show travel animation
 
 export default function HomeScreen() {
   const [view, setView] = useState<View>("home");
@@ -70,7 +70,7 @@ export default function HomeScreen() {
   // ─── Home view ───────────────────────────────────────────────────────
   if (view === "home") {
     return (
-      <div className="flex flex-col flex-1 items-center justify-center min-h-screen px-5">
+      <div className="flex flex-col flex-1 items-center justify-center min-h-screen px-5 pt-16">
         <div className="flex flex-col items-center gap-2 w-full max-w-lg">
           {/* Subline above title */}
           <p className="text-sm text-secondary tracking-wide text-center">
@@ -98,22 +98,25 @@ export default function HomeScreen() {
           {isLimited ? (
             <RateLimitMessage onDone={() => setView("submit")} />
           ) : (
-            /* Action buttons */
-            <div className="flex gap-3 justify-center w-full">
-              <button
-                onClick={handleMakeWiser}
-                disabled={loading}
-                className="flex-1 max-w-[200px] py-3.5 bg-button-fill text-cream text-sm tracking-wide hover:opacity-90 transition-opacity disabled:opacity-50 whitespace-nowrap"
-              >
-                {loading ? "Finding..." : "Make me wiser"}
-              </button>
-              <button
-                onClick={() => setView("submit")}
-                className="flex-1 max-w-[200px] py-3.5 border border-primary text-primary text-sm tracking-wide hover:bg-primary hover:text-cream transition-colors whitespace-nowrap"
-              >
-                Share my lesson
-              </button>
-            </div>
+            <>
+              {/* Action buttons */}
+              <div className="flex gap-3 justify-center w-full">
+                <button
+                  onClick={handleMakeWiser}
+                  disabled={loading}
+                  className="flex-1 max-w-[200px] py-3.5 bg-button-fill text-cream text-sm tracking-wide hover:opacity-90 transition-opacity disabled:opacity-50 whitespace-nowrap"
+                >
+                  {loading ? "Finding..." : "Make me wiser"}
+                </button>
+                <button
+                  onClick={() => setView("submit")}
+                  className="flex-1 max-w-[200px] py-3.5 border border-primary text-primary text-sm tracking-wide hover:bg-primary hover:text-cream transition-colors whitespace-nowrap"
+                >
+                  Share my lesson
+                </button>
+              </div>
+              <p className="text-xs text-secondary/60 tracking-wide mt-3">Curated with love</p>
+            </>
           )}
         </div>
 

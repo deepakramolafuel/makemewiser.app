@@ -113,7 +113,7 @@ export default function ShareImageGenerator({ lesson, onClose }: ShareImageGener
                 {lesson.life_lesson} ~
               </p>
               <p style={{ fontSize: 36, color: "#8A8478", marginBottom: 80 }}>
-                — {lesson.person_name}
+                {lesson.person_name}
                 {lesson.person_age ? `, ${lesson.person_age}` : ""}, {lesson.country}
               </p>
               <div style={{ borderTop: "2px solid #E5E0D8", paddingTop: 48 }}>

@@ -20,7 +20,7 @@ export default function LessonCard({ lesson, onNext, onDone, loading }: LessonCa
 
   const attribution = [
     lesson.person_name,
-    lesson.person_age ? `Age ${lesson.person_age}` : null,
+    lesson.person_age ? String(lesson.person_age) : null,
     lesson.country,
   ]
     .filter(Boolean)
@@ -50,7 +50,7 @@ export default function LessonCard({ lesson, onNext, onDone, loading }: LessonCa
 
           {/* Attribution — name, age, country together */}
           <p className="text-xs text-secondary text-center tracking-wide mb-6">
-            — {attribution}
+            {attribution}
           </p>
 
           {/* Actions: favourite, share, report */}
