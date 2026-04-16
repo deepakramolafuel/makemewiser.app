@@ -1,36 +1,166 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Make Me Wiser
 
-## Getting Started
+A life-lesson sharing web app by [Project FUEL](https://projectfuel.in). Receive a random life lesson from a real person somewhere in the world — or share one of your own.
 
-First, run the development server:
+Built with Next.js 16, Tailwind CSS, and Supabase.
+
+---
+
+## Prerequisites
+
+Before you begin, you need:
+
+1. **Node.js v22+** — installed (already done if you used the setup guide)
+2. **A Supabase project** — free at [supabase.com](https://supabase.com)
+3. **An Anthropic API key** — get one at [console.anthropic.com](https://console.anthropic.com)
+
+---
+
+## Local Setup
+
+### 1. Install dependencies
+
+```bash
+npm install
+```
+
+### 2. Set up environment variables
+
+Copy `.env.example` to `.env.local` and fill in your values:
+
+```bash
+cp .env.example .env.local
+```
+
+Open `.env.local` and fill in:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+ANTHROPIC_API_KEY=your-anthropic-api-key
+```
+
+**Where to find these values:**
+- Supabase URL and anon key: Supabase dashboard → Settings → API
+- Service role key: Supabase dashboard → Settings → API → `service_role` (keep this secret!)
+- Anthropic key: [console.anthropic.com](https://console.anthropic.com) → API Keys
+
+### 3. Set up the database
+
+Go to your Supabase project → **SQL Editor** → paste the contents of `supabase/schema.sql` → click **Run**.
+
+This creates the `lessons` and `reports` tables, indexes, RLS policies, and the `increment_favourite` function.
+
+### 4. Seed the database
+
+```bash
+npm run seed
+```
+
+This loads the 248 curated life lessons from Project FUEL's World Wisdom Map CSV into your database. You'll see a count of lessons inserted and a list of any skipped rows.
+
+### 5. Run locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) — you should see the home screen.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Deployment to Vercel
 
-## Learn More
+### Step 1: Push to GitHub
 
-To learn more about Next.js, take a look at the following resources:
+Create a new GitHub repo and push this project to it.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Step 2: Connect to Vercel
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Go to [vercel.com](https://vercel.com) → New Project
+2. Import your GitHub repo
+3. Vercel will auto-detect Next.js — no config needed
 
-## Deploy on Vercel
+### Step 3: Add environment variables in Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+In Vercel → your project → Settings → Environment Variables, add all four:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Variable | Value |
+|---|---|
+| `NEXT_PUBLIC_SUPABASE_URL` | Your Supabase project URL |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Your Supabase anon key |
+| `SUPABASE_SERVICE_ROLE_KEY` | Your Supabase service role key |
+| `ANTHROPIC_API_KEY` | Your Anthropic API key |
+
+### Step 4: Deploy
+
+Click **Deploy**. Vercel builds and deploys. Done.
+
+---
+
+## Required Supabase Settings
+
+- **Row Level Security (RLS) must be enabled** on the `lessons` and `reports` tables — the schema.sql does this automatically
+- No auth callback URLs needed (no user auth in v1)
+
+---
+
+## Folder Structure
+
+```
+app/
+  components/     — All UI components
+  api/            — API route handlers (serverless functions)
+  about/          — About page
+  layout.tsx      — Root layout (fonts, global styles)
+  page.tsx        — Home page
+hooks/            — Custom React hooks (rate limit, favourites, session)
+lib/              — Supabase clients, types, API helpers, countries list
+supabase/
+  schema.sql      — Database schema (run this in Supabase SQL Editor)
+  seed.ts         — Seed script (run with npm run seed)
+  lessons.csv     — Source data (248 curated FUEL lessons)
+public/
+  illustrations/  — Placeholder illustrations (replace with custom artwork)
+```
+
+---
+
+## Making Changes
+
+- **Edit UI components** in `app/components/` — each file is one component
+- **Edit API logic** in `app/api/*/route.ts`
+- **Add a new page** — create `app/your-page/page.tsx`
+- **Change colors** — edit the `@theme` block in `app/globals.css`
+- **Change fonts** — edit `app/layout.tsx`
+
+After any change: `npm run dev` to test locally, then push to GitHub — Vercel redeploys automatically.
+
+---
+
+## Manual Steps After Deployment
+
+- [ ] **Source custom illustrations** — replace the emoji placeholders in `HomeScreen.tsx`, `RateLimitMessage.tsx`, and `ConfirmationScreen.tsx` with hand-drawn artwork
+- [ ] **Set up custom domain** in Vercel → your project → Domains
+- [ ] **Monitor reported lessons** via Supabase dashboard → Table Editor → lessons → filter `is_reported = true`
+
+---
+
+## Verification Checklist
+
+- [ ] Home page loads with greeting, two buttons, counter
+- [ ] "Make me wiser" returns a random lesson
+- [ ] Story expands with travel line
+- [ ] No repeated lessons within a session
+- [ ] Rate limit message after 10 lessons
+- [ ] Favourite increments (once per lesson)
+- [ ] Report works
+- [ ] "Share my lesson" form submits and shows confirmation
+- [ ] About page loads
+- [ ] Share image generates and downloads
+- [ ] Responsive on mobile (375px)
+
+---
+
+*A Project FUEL initiative — projectfuel.in*

@@ -1,26 +1,103 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
+  --color-cream: #FAF7F2;
+  --color-primary: #2C2C2C;
+  --color-secondary: #8A8478;
+  --color-button-fill: #3D3D3D;
+  --color-card-border: #E5E0D8;
+  --color-accent: #A67C5B;
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-playfair);
+
+  /* Custom animations */
+  --animate-float: float 4s ease-in-out infinite;
+  --animate-twinkle: twinkle 3s ease-in-out infinite;
+  --animate-pulse-slow: pulse-slow 4s ease-in-out infinite;
+  --animate-fade-in-up: fadeInUp 0.5s ease-out forwards;
+  --animate-envelope-open: envelopeOpen 0.6s ease-out forwards;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--color-cream);
+  color: var(--color-primary);
+}
+
+/* ── Float animation for envelopes ─────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+
+/* ── Twinkling stars ───────────────────────────────────── */
+@keyframes twinkle {
+  0%, 100% { opacity: 0.3; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+/* ── Slow pulse for portals ────────────────────────────── */
+@keyframes pulse-slow {
+  0%, 100% { opacity: 0.85; }
+  50% { opacity: 1; }
+}
+
+/* ── Fade in + slide up for cards ──────────────────────── */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Envelope open reveal ──────────────────────────────── */
+@keyframes envelopeOpen {
+  0% { transform: scale(0.9) translateY(16px); opacity: 0; }
+  50% { transform: scale(1.02) translateY(-4px); opacity: 1; }
+  100% { transform: scale(1) translateY(0); opacity: 1; }
+}
+
+/* ── Draw path (for flowing line) ──────────────────────── */
+@keyframes drawPath {
+  from { stroke-dashoffset: 600; }
+  to { stroke-dashoffset: 0; }
+}
+
+.animate-draw-path {
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: drawPath 2s ease-out forwards;
+}
+
+/* ── Travelling envelope along path ───────────────────── */
+@keyframes travelEnvelope {
+  0% { offset-distance: 0%; opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0.6; }
+}
+
+.animate-travel-envelope {
+  offset-path: path("M 30 60 C 80 20, 140 100, 200 50 C 230 30, 260 70, 280 55");
+  offset-rotate: auto;
+  animation: travelEnvelope 2.5s ease-in-out infinite;
+}
+
+/* ── Gentle seed unfurl for lesson reveal ─────────────── */
+@keyframes seedUnfurl {
+  0% { transform: scale(0.85) translateY(20px); opacity: 0; filter: blur(2px); }
+  60% { transform: scale(1.01) translateY(-2px); opacity: 1; filter: blur(0); }
+  100% { transform: scale(1) translateY(0); opacity: 1; filter: blur(0); }
+}
+
+.animate-seed-unfurl {
+  animation: seedUnfurl 0.8s ease-out forwards;
+}
+
+/* ── Country motif gentle rotate ──────────────────────── */
+@keyframes gentleRotate {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+
+.animate-gentle-rotate {
+  animation: gentleRotate 6s ease-in-out infinite;
 }
