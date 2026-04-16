@@ -110,7 +110,7 @@ export default function ShareImageGenerator({ lesson, onClose }: ShareImageGener
           >
             <div style={{ maxWidth: 840, textAlign: "center" }}>
               <p style={{ fontSize: 64, lineHeight: 1.4, color: "#2C2C2C", marginBottom: 60 }}>
-                {lesson.life_lesson} ~
+                {lesson.life_lesson.replace(/[.!?]+\s*$/, "")} ~
               </p>
               <p style={{ fontSize: 36, color: "#8A8478", marginBottom: 80 }}>
                 {lesson.person_name}

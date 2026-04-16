@@ -115,7 +115,7 @@ export default function HomeScreen() {
                   Share my lesson
                 </button>
               </div>
-              <p className="text-xs text-secondary/60 tracking-wide mt-3">Curated with love</p>
+              <p className="text-xs text-secondary/60 tracking-wide mt-3">Curated by FUEL, with love</p>
             </>
           )}
         </div>

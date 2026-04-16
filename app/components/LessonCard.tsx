@@ -45,7 +45,7 @@ export default function LessonCard({ lesson, onNext, onDone, loading }: LessonCa
 
           {/* Life lesson text — large serif */}
           <blockquote className="font-serif text-2xl md:text-3xl leading-snug text-primary text-center px-2 mb-6">
-            {lesson.life_lesson}&nbsp;~
+            {lesson.life_lesson.replace(/[.!?]+\s*$/, "")}&nbsp;~
           </blockquote>
 
           {/* Attribution — name, age, country together */}
