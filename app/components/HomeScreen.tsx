@@ -40,10 +40,15 @@ export default function HomeScreen() {
   }, [view, pendingLesson]);
 
   const fetchLesson = useCallback(async () => {
+    // Honour rate limit from any entry point (initial tap and "Make me wiser again")
+    if (isLimited) {
+      setView("home");
+      return;
+    }
+
     setLoading(true);
     setApiError(false);
 
-    const fetchStart = Date.now();
     const data = await getRandomLesson(seenIds);
 
     if (!data) {
@@ -60,10 +65,9 @@ export default function HomeScreen() {
     setPendingLesson(data);
     setView("travelling");
     setLoading(false);
-  }, [seenIds, markSeen, recordTap]);
+  }, [isLimited, seenIds, markSeen, recordTap]);
 
   function handleMakeWiser() {
-    if (isLimited) return;
     fetchLesson();
   }
 
