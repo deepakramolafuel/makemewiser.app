@@ -14,7 +14,7 @@ export default function HeroIllustration() {
       aria-hidden="true"
     >
       {/* Ghost latitude lines — quiet sense of "the world" */}
-      <g opacity="0.08" stroke="#2C2C2C" strokeWidth="0.8" fill="none">
+      <g opacity="0.22" stroke="#2C2C2C" strokeWidth="0.8" strokeDasharray="2 4" fill="none">
         <path d="M 0 130 Q 250 90 500 130" />
         <path d="M 0 170 Q 250 130 500 170" />
         <path d="M 0 210 Q 250 170 500 210" />

@@ -34,35 +34,40 @@ export default function HeroIllustrationCrane() {
         <path d="M 70 175 L 72 181 L 78 183 L 72 185 L 70 191 L 68 185 L 62 183 L 68 181 Z" fill="none" stroke="#2C2C2C" strokeWidth="0.9" />
       </g>
 
-      {/* The paper crane — centered, gently swaying */}
-      <g className="animate-crane-sway" transform="translate(250, 140)">
-        {/* Body — folded triangular fuselage */}
-        <path
-          d="M -70 -10 L -10 10 L 50 -5 L 70 8 L 40 22 L -20 22 L -70 -10 Z"
-          stroke="#2C2C2C"
-          strokeWidth="1.6"
-          strokeLinejoin="round"
-          fill="#FAF7F2"
-        />
-        {/* Fold line down the body */}
-        <path d="M -70 -10 L 70 8" stroke="#2C2C2C" strokeWidth="0.9" fill="none" />
-        {/* Beak — pointed top-left */}
-        <path d="M -70 -10 L -85 -22 L -62 -16 Z" stroke="#2C2C2C" strokeWidth="1.4" fill="#FAF7F2" strokeLinejoin="round" />
-        {/* Eye dot */}
-        <circle cx="-58" cy="-8" r="1.4" fill="#2C2C2C" />
-        {/* Upper wing — flaps slightly */}
-        <g className="animate-wing-flap">
-          <path d="M -20 -5 L 10 -65 L 45 -8 Z" stroke="#2C2C2C" strokeWidth="1.5" fill="#FAF7F2" strokeLinejoin="round" />
-          <path d="M 10 -65 L 12 -8" stroke="#2C2C2C" strokeWidth="0.9" fill="none" />
-          <path d="M -10 -20 L 30 -22" stroke="#2C2C2C" strokeWidth="0.7" fill="none" opacity="0.6" />
+      {/* The paper crane — centered, gently swaying.
+          Outer <g> positions; inner <g> applies CSS sway. Splitting is required
+          because a CSS `transform` on the same node would override the SVG
+          `transform` attribute and snap the crane to (0,0). */}
+      <g transform="translate(250, 140)">
+        <g className="animate-crane-sway">
+          {/* Body — folded triangular fuselage */}
+          <path
+            d="M -70 -10 L -10 10 L 50 -5 L 70 8 L 40 22 L -20 22 L -70 -10 Z"
+            stroke="#2C2C2C"
+            strokeWidth="1.6"
+            strokeLinejoin="round"
+            fill="#FAF7F2"
+          />
+          {/* Fold line down the body */}
+          <path d="M -70 -10 L 70 8" stroke="#2C2C2C" strokeWidth="0.9" fill="none" />
+          {/* Beak — pointed top-left */}
+          <path d="M -70 -10 L -85 -22 L -62 -16 Z" stroke="#2C2C2C" strokeWidth="1.4" fill="#FAF7F2" strokeLinejoin="round" />
+          {/* Eye dot */}
+          <circle cx="-58" cy="-8" r="1.4" fill="#2C2C2C" />
+          {/* Upper wing — flaps slightly */}
+          <g className="animate-wing-flap">
+            <path d="M -20 -5 L 10 -65 L 45 -8 Z" stroke="#2C2C2C" strokeWidth="1.5" fill="#FAF7F2" strokeLinejoin="round" />
+            <path d="M 10 -65 L 12 -8" stroke="#2C2C2C" strokeWidth="0.9" fill="none" />
+            <path d="M -10 -20 L 30 -22" stroke="#2C2C2C" strokeWidth="0.7" fill="none" opacity="0.6" />
+          </g>
+          {/* Lower wing — opposite flap rhythm */}
+          <g className="animate-wing-flap" style={{ animationDelay: "1.2s" }}>
+            <path d="M -10 18 L 20 70 L 50 18 Z" stroke="#2C2C2C" strokeWidth="1.4" fill="#FAF7F2" strokeLinejoin="round" />
+            <path d="M 20 70 L 22 22" stroke="#2C2C2C" strokeWidth="0.9" fill="none" />
+          </g>
+          {/* Tail — fanned */}
+          <path d="M 70 8 L 105 -2 L 102 16 L 95 8 L 100 22 L 88 14 Z" stroke="#2C2C2C" strokeWidth="1.4" fill="#FAF7F2" strokeLinejoin="round" />
         </g>
-        {/* Lower wing — opposite flap rhythm */}
-        <g className="animate-wing-flap" style={{ animationDelay: "1.2s" }}>
-          <path d="M -10 18 L 20 70 L 50 18 Z" stroke="#2C2C2C" strokeWidth="1.4" fill="#FAF7F2" strokeLinejoin="round" />
-          <path d="M 20 70 L 22 22" stroke="#2C2C2C" strokeWidth="0.9" fill="none" />
-        </g>
-        {/* Tail — fanned */}
-        <path d="M 70 8 L 105 -2 L 102 16 L 95 8 L 100 22 L 88 14 Z" stroke="#2C2C2C" strokeWidth="1.4" fill="#FAF7F2" strokeLinejoin="round" />
       </g>
 
       {/* Scattered letters falling — the lessons the crane has carried */}
