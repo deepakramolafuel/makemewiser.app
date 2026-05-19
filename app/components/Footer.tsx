@@ -10,7 +10,7 @@ export default function Footer() {
         About Project FUEL
       </Link>
       <span className="mx-2">·</span>
-      <span>makemewiser.app</span>
+      <span>wiser.projectfuel.in</span>
     </footer>
   );
 }
