@@ -6,6 +6,7 @@ import SubmitLessonForm from "./SubmitLessonForm";
 import RateLimitMessage from "./RateLimitMessage";
 import Footer from "./Footer";
 import HeroIllustration from "./illustrations/HeroIllustration";
+import HeroIllustrationCrane from "./illustrations/HeroIllustrationCrane";
 import TravelLoader from "./TravelLoader";
 import { useRateLimit } from "@/hooks/useRateLimit";
 import { useSessionLessons } from "@/hooks/useSessionLessons";
@@ -16,15 +17,27 @@ type View = "home" | "travelling" | "lesson" | "submit";
 
 const MIN_TRAVEL_DURATION = 4500; // minimum ms to show travel animation
 
+// Pick the hero illustration based on the build-time default or a runtime
+// override via ?hero=1|2. Lets Deepak A/B between variants without redeploying.
+const DEFAULT_HERO: 1 | 2 = process.env.NEXT_PUBLIC_HERO_VARIANT === "2" ? 2 : 1;
+
 export default function HomeScreen() {
   const [view, setView] = useState<View>("home");
   const [lesson, setLesson] = useState<LessonResponse | null>(null);
   const [pendingLesson, setPendingLesson] = useState<LessonResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [apiError, setApiError] = useState(false);
+  const [heroVariant, setHeroVariant] = useState<1 | 2>(DEFAULT_HERO);
 
   const { isLimited, recordTap } = useRateLimit();
   const { seenIds, markSeen } = useSessionLessons();
+
+  // Allow ?hero=1 / ?hero=2 to override the default for quick A/B previews.
+  useEffect(() => {
+    const param = new URLSearchParams(window.location.search).get("hero");
+    if (param === "1") setHeroVariant(1);
+    if (param === "2") setHeroVariant(2);
+  }, []);
 
   // Transition from travelling → lesson after animation completes
   useEffect(() => {
@@ -40,10 +53,15 @@ export default function HomeScreen() {
   }, [view, pendingLesson]);
 
   const fetchLesson = useCallback(async () => {
+    // Honour rate limit from any entry point (initial tap and "Make me wiser again")
+    if (isLimited) {
+      setView("home");
+      return;
+    }
+
     setLoading(true);
     setApiError(false);
 
-    const fetchStart = Date.now();
     const data = await getRandomLesson(seenIds);
 
     if (!data) {
@@ -60,10 +78,9 @@ export default function HomeScreen() {
     setPendingLesson(data);
     setView("travelling");
     setLoading(false);
-  }, [seenIds, markSeen, recordTap]);
+  }, [isLimited, seenIds, markSeen, recordTap]);
 
   function handleMakeWiser() {
-    if (isLimited) return;
     fetchLesson();
   }
 
@@ -82,9 +99,9 @@ export default function HomeScreen() {
             Make Me Wiser
           </h1>
 
-          {/* Hero illustration */}
+          {/* Hero illustration — variant selected via ?hero=1|2 or env default */}
           <div className="my-8 w-full">
-            <HeroIllustration />
+            {heroVariant === 2 ? <HeroIllustrationCrane /> : <HeroIllustration />}
           </div>
 
           {/* API error */}

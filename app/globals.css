@@ -248,3 +248,57 @@ body {
   stroke-linecap: round;
 }
 
+/* ── Hero variant 1 — envelope flying along the arc ─────── */
+@keyframes travelHero {
+  0%   { offset-distance: 0%;   opacity: 0; }
+  8%   { opacity: 1; }
+  92%  { opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0.5; }
+}
+
+.animate-travel-hero {
+  offset-path: path("M 105 160 C 180 80, 320 240, 395 150");
+  offset-rotate: auto;
+  animation: travelHero 6s ease-in-out infinite;
+}
+
+/* Slower draw-on for the hero arc */
+.animate-draw-hero-arc {
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: drawPath 3.5s ease-out forwards;
+}
+
+/* ── Hero variant 2 — crane gentle sway + wing flap ─────── */
+@keyframes craneSway {
+  0%, 100% { transform: translate(0, 0) rotate(-3deg); }
+  50%      { transform: translate(0, -10px) rotate(3deg); }
+}
+
+.animate-crane-sway {
+  animation: craneSway 5s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+@keyframes wingFlap {
+  0%, 100% { transform: scaleY(1); }
+  50%      { transform: scaleY(0.85); }
+}
+
+.animate-wing-flap {
+  animation: wingFlap 2.4s ease-in-out infinite;
+  transform-origin: center;
+  transform-box: fill-box;
+}
+
+/* Looped dashed trail behind the crane */
+.animate-draw-trail {
+  stroke-dasharray: 4 6;
+  stroke-dashoffset: 200;
+  animation: drawTrail 8s linear infinite;
+}
+
+@keyframes drawTrail {
+  to { stroke-dashoffset: 0; }
+}

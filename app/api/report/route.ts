@@ -2,11 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { createServiceClient } from "@/lib/supabase-server";
 import { createHash } from "crypto";
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 export async function POST(request: NextRequest) {
   const body = await request.json().catch(() => null);
   const lessonId = body?.lesson_id;
 
-  if (!lessonId || typeof lessonId !== "string") {
+  if (!lessonId || typeof lessonId !== "string" || !UUID_RE.test(lessonId)) {
     return NextResponse.json({ error: "lesson_id is required" }, { status: 400 });
   }
 
@@ -16,7 +18,7 @@ export async function POST(request: NextRequest) {
   const ip = request.headers.get("x-forwarded-for") ?? request.headers.get("x-real-ip") ?? "unknown";
   const ipHash = createHash("sha256").update(ip).digest("hex");
 
-  // Insert the report
+  // Insert the report row
   const { error: insertError } = await supabase
     .from("reports")
     .insert({ lesson_id: lessonId, ip_hash: ipHash });
@@ -25,23 +27,14 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Failed to report" }, { status: 500 });
   }
 
-  // Increment report_count and auto-hide at 3 reports
-  const { data: lesson, error: fetchError } = await supabase
-    .from("lessons")
-    .select("report_count")
-    .eq("id", lessonId)
-    .single();
+  // Atomic increment + auto-hide via RPC (no read-then-write race)
+  const { error: rpcError } = await supabase.rpc("increment_report_count", {
+    p_lesson_id: lessonId,
+    p_threshold: 3,
+  });
 
-  if (!fetchError && lesson) {
-    const newCount = (lesson.report_count ?? 0) + 1;
-    await supabase
-      .from("lessons")
-      .update({
-        report_count: newCount,
-        // Auto-hide after 3 reports
-        ...(newCount >= 3 ? { is_reported: true } : {}),
-      })
-      .eq("id", lessonId);
+  if (rpcError) {
+    return NextResponse.json({ error: "Failed to update report count" }, { status: 500 });
   }
 
   return NextResponse.json({ reported: true });

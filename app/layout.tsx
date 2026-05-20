@@ -17,7 +17,7 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: "Make Me Wiser",
   description:
-    "Life lessons from real people in 196 countries. Collected over 15 years by Project FUEL.",
+    "Life lessons from real people in 195 countries. Collected over 15 years by Project FUEL.",
 };
 
 export default function RootLayout({

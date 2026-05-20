@@ -21,7 +21,7 @@ export default function Footer() {
           About
         </Link>
         <span>·</span>
-        <span>makemewiser.app</span>
+        <span>wiser.projectfuel.in</span>
       </div>
     </footer>
   );

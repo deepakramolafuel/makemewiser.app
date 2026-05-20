@@ -146,7 +146,7 @@ export default function ShareImageGenerator({ lesson, onClose }: ShareImageGener
           >
             copy link
           </button>{" "}
-          to share makemewiser.app
+          to share wiser.projectfuel.in
         </p>
       </div>
     </div>
