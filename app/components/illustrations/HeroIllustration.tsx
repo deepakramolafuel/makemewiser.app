@@ -1,87 +1,243 @@
-// Hand-drawn style envelope illustration for the homepage
-// Inspired by @janustiu's Life Advice from Strangers — envelopes flowing between portals
+"use client";
 
-export default function HeroIllustration() {
+// "The Flight Path" — a paper plane wanders an infinity loop.
+// At each waypoint a country card blooms, with a contributor's
+// name underneath. Constellation lines tie the background.
+
+import { useEffect, useState } from "react";
+
+const FP_TRAIL =
+  "M 100 250 C 100 100, 350 100, 450 250 C 550 400, 800 400, 800 250 C 800 100, 550 100, 450 250 C 350 400, 100 400, 100 250 Z";
+
+type Side = "below" | "above" | "left" | "right";
+
+const FP_WAYPOINTS: { x: number; y: number; side: Side }[] = [
+  { x: 100, y: 250, side: "above" },
+  { x: 315, y: 150, side: "right" },
+  { x: 585, y: 350, side: "right" },
+  { x: 800, y: 250, side: "above" },
+  { x: 585, y: 150, side: "left"  },
+  { x: 315, y: 350, side: "left"  },
+];
+
+const FP_SPARKLES = [
+  { x: 60,  y: 60,  s: 11, d: 0   },
+  { x: 840, y: 60,  s: 9,  d: 1.2 },
+  { x: 450, y: 50,  s: 7,  d: 0.6 },
+  { x: 450, y: 450, s: 8,  d: 2.0 },
+  { x: 60,  y: 440, s: 10, d: 1.5 },
+  { x: 840, y: 440, s: 6,  d: 0.3 },
+  { x: 200, y: 250, s: 6,  d: 2.4 },
+  { x: 700, y: 250, s: 6,  d: 0.9 },
+];
+
+const FP_CONSTELLATION: { x1: number; y1: number; x2: number; y2: number }[] = [
+  { x1: 60,  y1: 60,  x2: 450, y2: 50  },
+  { x1: 450, y1: 50,  x2: 840, y2: 60  },
+  { x1: 60,  y1: 440, x2: 450, y2: 450 },
+  { x1: 450, y1: 450, x2: 840, y2: 440 },
+  { x1: 60,  y1: 60,  x2: 200, y2: 250 },
+  { x1: 840, y1: 60,  x2: 700, y2: 250 },
+  { x1: 60,  y1: 440, x2: 200, y2: 250 },
+  { x1: 840, y1: 440, x2: 700, y2: 250 },
+];
+
+const CYCLE = 24;
+
+const FALLBACK_COUNTRIES = ["Japan", "India", "Brazil", "Kenya", "Iceland", "Peru"];
+const FALLBACK_NAMES = ["Aida", "Jiro", "Mateus", "Sara", "Niamh", "Tomás", "Lin", "Kofi"];
+
+function Sparkle({ size, opacity = 1 }: { size: number; opacity?: number }) {
+  const r = size / 2;
   return (
     <svg
-      viewBox="30 110 460 200"
+      width={size}
+      height={size}
+      viewBox={`-${r} -${r} ${size} ${size}`}
       fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      className="w-full max-w-md mx-auto"
-      aria-hidden="true"
-      overflow="hidden"
+      stroke="#2C2C2C"
+      strokeWidth="0.9"
+      strokeLinejoin="round"
+      style={{ opacity, display: "block" }}
     >
-      {/* Left portal/mailbox shape */}
-      <ellipse cx="100" cy="200" rx="45" ry="65" fill="#2C2C2C" className="animate-pulse-slow" />
-
-      {/* Flowing path connecting portals */}
-      <path
-        d="M 145 200 C 200 140, 250 280, 300 200 C 330 160, 370 220, 400 180"
-        stroke="#2C2C2C"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        fill="none"
-        className="animate-draw-path"
-      />
-
-      {/* Right portal/mailbox shape */}
-      <ellipse cx="420" cy="200" rx="40" ry="58" fill="#2C2C2C" className="animate-pulse-slow" style={{ animationDelay: "1s" }} />
-
-      {/* Envelope 1 - flying top */}
-      <g transform="translate(200, 140) rotate(-12)" className="animate-float" style={{ animationDelay: "0.2s" }}>
-        <rect x="0" y="0" width="40" height="28" rx="2" stroke="#2C2C2C" strokeWidth="1.5" fill="#FAF7F2" />
-        <path d="M 0 0 L 20 14 L 40 0" stroke="#2C2C2C" strokeWidth="1.5" fill="none" />
-        <path d="M 0 28 L 15 14" stroke="#2C2C2C" strokeWidth="1" fill="none" />
-        <path d="M 40 28 L 25 14" stroke="#2C2C2C" strokeWidth="1" fill="none" />
-      </g>
-
-      {/* Envelope 2 - middle */}
-      <g transform="translate(270, 180) rotate(8)" className="animate-float" style={{ animationDelay: "0.5s" }}>
-        <rect x="0" y="0" width="48" height="34" rx="2" stroke="#2C2C2C" strokeWidth="1.5" fill="#FAF7F2" />
-        <path d="M 0 0 L 24 17 L 48 0" stroke="#2C2C2C" strokeWidth="1.5" fill="none" />
-        <path d="M 0 34 L 18 17" stroke="#2C2C2C" strokeWidth="1" fill="none" />
-        <path d="M 48 34 L 30 17" stroke="#2C2C2C" strokeWidth="1" fill="none" />
-      </g>
-
-      {/* Envelope 3 - near right portal */}
-      <g transform="translate(350, 160) rotate(-5)" className="animate-float" style={{ animationDelay: "0.8s" }}>
-        <rect x="0" y="0" width="36" height="24" rx="2" stroke="#2C2C2C" strokeWidth="1.5" fill="#FAF7F2" />
-        <path d="M 0 0 L 18 12 L 36 0" stroke="#2C2C2C" strokeWidth="1.5" fill="none" />
-      </g>
-
-      {/* Envelope 4 - exiting right portal */}
-      <g transform="translate(400, 240) rotate(15)" className="animate-float" style={{ animationDelay: "1.1s" }}>
-        <rect x="0" y="0" width="42" height="30" rx="2" stroke="#2C2C2C" strokeWidth="1.5" fill="#FAF7F2" />
-        <path d="M 0 0 L 21 15 L 42 0" stroke="#2C2C2C" strokeWidth="1.5" fill="none" />
-        <path d="M 0 30 L 16 15" stroke="#2C2C2C" strokeWidth="1" fill="none" />
-        <path d="M 42 30 L 26 15" stroke="#2C2C2C" strokeWidth="1" fill="none" />
-      </g>
-
-      {/* Small letter peeking from left portal */}
-      <g transform="translate(120, 170) rotate(-20)">
-        <rect x="0" y="0" width="22" height="30" rx="1" stroke="#2C2C2C" strokeWidth="1" fill="#FAF7F2" />
-        <line x1="4" y1="8" x2="18" y2="8" stroke="#E5E0D8" strokeWidth="1" />
-        <line x1="4" y1="13" x2="18" y2="13" stroke="#E5E0D8" strokeWidth="1" />
-        <line x1="4" y1="18" x2="14" y2="18" stroke="#E5E0D8" strokeWidth="1" />
-      </g>
-
-      {/* Decorative stars */}
-      <g className="animate-twinkle">
-        <path d="M 170 120 L 172 126 L 178 128 L 172 130 L 170 136 L 168 130 L 162 128 L 168 126 Z" fill="none" stroke="#2C2C2C" strokeWidth="1" />
-      </g>
-      <g className="animate-twinkle" style={{ animationDelay: "0.7s" }}>
-        <path d="M 340 130 L 341.5 134 L 346 135.5 L 341.5 137 L 340 141 L 338.5 137 L 334 135.5 L 338.5 134 Z" fill="none" stroke="#2C2C2C" strokeWidth="1" />
-      </g>
-      <g className="animate-twinkle" style={{ animationDelay: "1.4s" }}>
-        <path d="M 150 280 L 152 286 L 158 288 L 152 290 L 150 296 L 148 290 L 142 288 L 148 286 Z" fill="none" stroke="#2C2C2C" strokeWidth="1" />
-      </g>
-
-      {/* Small decorative diamond */}
-      <rect x="228" y="230" width="6" height="6" transform="rotate(45 231 233)" fill="#2C2C2C" />
-
-      {/* Small floating seeds/leaves */}
-      <path d="M 310 260 Q 315 250 320 260 Q 315 265 310 260" fill="none" stroke="#2C2C2C" strokeWidth="1" />
-      <path d="M 180 250 Q 185 242 190 250 Q 185 255 180 250" fill="none" stroke="#2C2C2C" strokeWidth="1" transform="rotate(30 185 248)" />
+      <path d={`M 0 -${r} L 1.2 -1.2 L ${r} 0 L 1.2 1.2 L 0 ${r} L -1.2 1.2 L -${r} 0 L -1.2 -1.2 Z`} />
     </svg>
+  );
+}
+
+function pickRandom<T>(arr: T[], n: number): T[] {
+  if (arr.length <= n) return arr;
+  const shuffled = [...arr].sort(() => Math.random() - 0.5);
+  return shuffled.slice(0, n);
+}
+
+function shuffle<T>(arr: T[]): T[] {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+// One country card. Owns an exclusive chunk of contributor names
+// and rotates through them on each animation iteration.
+function CountryCard({
+  waypoint,
+  country,
+  names,
+  slotIndex,
+  totalSlots,
+  delay,
+}: {
+  waypoint: { x: number; y: number; side: Side };
+  country: string;
+  names: string[];
+  slotIndex: number;
+  totalSlots: number;
+  delay: number;
+}) {
+  const chunkSize = Math.max(1, Math.floor(names.length / totalSlots));
+  const start = slotIndex * chunkSize;
+  const myNames = names.slice(start, start + chunkSize);
+  const safeNames = myNames.length
+    ? myNames
+    : names.length
+      ? [names[slotIndex % names.length]]
+      : [""];
+
+  const [iter, setIter] = useState(0);
+  const person = safeNames[iter % safeNames.length];
+
+  return (
+    <div
+      className={`fp-card side-${waypoint.side}`}
+      style={{
+        left: `${(waypoint.x / 900) * 100}%`,
+        top: `${(waypoint.y / 500) * 100}%`,
+        animationDelay: `${delay}s`,
+      }}
+      onAnimationIteration={() => setIter((i) => i + 1)}
+    >
+      <div className="fp-card-inner">
+        <div className="fp-card-country">{country}</div>
+        <div className="fp-card-person">— {person}</div>
+      </div>
+    </div>
+  );
+}
+
+export default function HeroIllustration() {
+  const [countries, setCountries] = useState<string[]>(FALLBACK_COUNTRIES);
+  const [names, setNames] = useState<string[]>(FALLBACK_NAMES);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    fetch("/api/countries")
+      .then((r) => r.json())
+      .then((data: { countries?: string[] }) => {
+        if (cancelled || !data.countries?.length) return;
+        setCountries(pickRandom(data.countries, FP_WAYPOINTS.length));
+      })
+      .catch(() => {});
+
+    fetch("/api/contributors")
+      .then((r) => r.json())
+      .then((data: { names?: string[] }) => {
+        if (cancelled || !data.names?.length) return;
+        setNames(shuffle(data.names));
+      })
+      .catch(() => {});
+
+    return () => { cancelled = true; };
+  }, []);
+
+  const countryLabels = FP_WAYPOINTS.map((_, i) => countries[i % countries.length] ?? "");
+
+  return (
+    <div className="fp-stage relative w-full mx-auto">
+
+      {/* BACKGROUND SVG */}
+      <svg
+        className="fp-svg absolute inset-0 w-full h-full"
+        viewBox="0 0 900 500"
+        preserveAspectRatio="xMidYMid meet"
+        style={{ overflow: "visible" }}
+        aria-hidden="true"
+      >
+        <g className="fp-constellation">
+          {FP_CONSTELLATION.map((l, i) => (
+            <line key={i} x1={l.x1} y1={l.y1} x2={l.x2} y2={l.y2} />
+          ))}
+        </g>
+
+        <path id="fp-trail-path" d={FP_TRAIL} className="fp-trail" fill="none" />
+        <path d={FP_TRAIL} className="fp-wake" fill="none" />
+
+        {FP_WAYPOINTS.map((p, i) => (
+          <circle
+            key={i}
+            cx={p.x}
+            cy={p.y}
+            className="fp-waypoint"
+            style={{ animationDelay: `${((i * CYCLE) / FP_WAYPOINTS.length).toFixed(2)}s` }}
+          />
+        ))}
+      </svg>
+
+      {/* Country cards (each carries a rotating contributor name) */}
+      {FP_WAYPOINTS.map((p, i) => (
+        <CountryCard
+          key={i}
+          waypoint={p}
+          country={countryLabels[i]}
+          names={names}
+          slotIndex={i}
+          totalSlots={FP_WAYPOINTS.length}
+          delay={(i * CYCLE) / FP_WAYPOINTS.length}
+        />
+      ))}
+
+      {/* Sparkles */}
+      {FP_SPARKLES.map((s, i) => (
+        <div
+          key={i}
+          className="fp-sparkle"
+          style={{
+            left: `${(s.x / 900) * 100}%`,
+            top: `${(s.y / 500) * 100}%`,
+            animationDelay: `${s.d}s`,
+          }}
+        >
+          <Sparkle size={s.s} />
+        </div>
+      ))}
+
+      {/* FOREGROUND SVG: just the paper plane */}
+      <svg
+        className="fp-svg absolute inset-0 w-full h-full pointer-events-none"
+        viewBox="0 0 900 500"
+        preserveAspectRatio="xMidYMid meet"
+        style={{ overflow: "visible" }}
+        aria-hidden="true"
+      >
+        <path id="fp-crane-path" d={FP_TRAIL} fill="none" stroke="none" />
+        <g className="fp-crane">
+          <g>
+            {/* paper plane — dart silhouette, viewed from above */}
+            <path d="M 42 0 L -22 -22 L -10 0 L -22 22 Z" />
+            {/* center fuselage crease */}
+            <path d="M 42 0 L -10 0" strokeWidth="0.7" strokeOpacity="0.55" />
+            {/* faint wing creases for paper feel */}
+            <path d="M 16 -10 L -12 -4" strokeWidth="0.5" strokeOpacity="0.35" />
+            <path d="M 16 10 L -12 4" strokeWidth="0.5" strokeOpacity="0.35" />
+          </g>
+          <animateMotion dur={`${CYCLE}s`} repeatCount="indefinite" rotate="auto">
+            <mpath href="#fp-crane-path" />
+          </animateMotion>
+        </g>
+      </svg>
+    </div>
   );
 }

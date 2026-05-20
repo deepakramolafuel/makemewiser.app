@@ -1,16 +1,28 @@
 import Link from "next/link";
+import FuelLogo from "./FuelLogo";
 
 export default function Footer() {
   return (
-    <footer className="mt-auto pt-8 pb-6 text-center text-sm text-secondary">
+    <footer className="mt-auto pt-10 pb-6 flex flex-col items-center gap-3 text-center text-sm text-secondary">
       <Link
-        href="/about"
-        className="hover:text-primary transition-colors underline underline-offset-2"
+        href="https://www.projectfuel.in"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-primary hover:opacity-80 transition-opacity"
+        aria-label="Project FUEL"
       >
-        About Project FUEL
+        <FuelLogo width={88} />
       </Link>
-      <span className="mx-2">·</span>
-      <span>makemewiser.app</span>
+      <div className="flex items-center gap-2 text-xs">
+        <Link
+          href="/about"
+          className="hover:text-primary transition-colors underline underline-offset-2"
+        >
+          About
+        </Link>
+        <span>·</span>
+        <span>makemewiser.app</span>
+      </div>
     </footer>
   );
 }

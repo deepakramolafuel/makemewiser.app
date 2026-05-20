@@ -101,3 +101,150 @@ body {
 .animate-gentle-rotate {
   animation: gentleRotate 6s ease-in-out infinite;
 }
+
+/* ─── Flight Path Hero ──────────────────────────────────── */
+
+/* Stage: roughly 9:5, fills available height on mobile */
+.fp-stage {
+  aspect-ratio: 9 / 5;
+  max-width: 640px;
+  width: 100%;
+}
+@media (max-width: 640px) {
+  .fp-stage {
+    aspect-ratio: auto;
+    height: 55vh;
+    max-height: 560px;
+    min-height: 340px;
+  }
+}
+
+.fp-trail {
+  stroke: #2C2C2C;
+  stroke-opacity: 0.5;
+  stroke-width: 1.3;
+  fill: none;
+  stroke-dasharray: 3 5;
+}
+
+/* Wake — a short visible segment that follows the crane along the path.
+   The total path length is roughly 1700 units; we show ~120u and chase
+   the rest. Animation duration matches the crane's CYCLE (24s). */
+.fp-wake {
+  stroke: #2C2C2C;
+  stroke-opacity: 0.55;
+  stroke-width: 1.6;
+  fill: none;
+  stroke-linecap: round;
+  stroke-dasharray: 120 1700;
+  animation: fp-wake-follow 24s linear infinite;
+}
+@keyframes fp-wake-follow {
+  from { stroke-dashoffset: 0; }
+  to   { stroke-dashoffset: -1820; }
+}
+
+.fp-waypoint {
+  fill: #2C2C2C;
+  opacity: 0.4;
+  r: 2.2;
+  animation: fp-pulse 24s linear infinite;
+}
+@keyframes fp-pulse {
+  0%, 3%  { r: 2.2; opacity: 0.4; }
+  7%      { r: 4;   opacity: 1; }
+  14%     { r: 2.2; opacity: 0.4; }
+  100%    { r: 2.2; opacity: 0.4; }
+}
+
+.fp-crane {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+.fp-crane path {
+  stroke: #2C2C2C;
+  stroke-width: 1.2;
+  fill: none;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+.fp-crane > g {
+  animation: fp-bob 1.4s ease-in-out infinite;
+  transform-box: fill-box;
+  transform-origin: center;
+}
+@keyframes fp-bob {
+  0%, 100% { transform: translateY(0)     scale(1.12); }
+  50%      { transform: translateY(-1.5px) scale(1.12); }
+}
+
+
+/* Country label cards — bloom + fade as the crane passes */
+.fp-card {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0;
+  animation: fp-card-life 24s linear infinite;
+  will-change: opacity, transform;
+}
+.fp-card-inner {
+  padding: 3px 9px 4px;
+  background: rgba(245, 240, 230, 0.92);
+  backdrop-filter: blur(2px);
+  border: 1px solid rgba(31, 27, 22, 0.16);
+  border-radius: 2px;
+  box-shadow: 0 1px 6px rgba(31, 27, 22, 0.04);
+  white-space: nowrap;
+}
+.fp-card-country {
+  font-family: var(--font-serif), "Cormorant Garamond", serif;
+  font-size: 13px;
+  line-height: 1.15;
+  color: #2C2C2C;
+  font-style: italic;
+  letter-spacing: 0.02em;
+}
+.fp-card-person {
+  font-family: var(--font-serif), "Cormorant Garamond", serif;
+  font-size: 10px;
+  line-height: 1.15;
+  color: rgba(60, 55, 45, 0.6);
+  font-style: italic;
+  letter-spacing: 0.02em;
+  margin-top: 2px;
+}
+/* Larger offsets — keep cards well clear of the crane on the loop */
+.fp-card.side-below { transform: translate(-50%, 44px); }
+.fp-card.side-above { transform: translate(-50%, calc(-100% - 44px)); }
+.fp-card.side-left  { transform: translate(calc(-100% - 44px), -50%); }
+.fp-card.side-right { transform: translate(44px, -50%); }
+
+@keyframes fp-card-life {
+  0%, 2%   { opacity: 0; }
+  5%       { opacity: 1; }
+  14%      { opacity: 1; }
+  18%      { opacity: 0; }
+  100%     { opacity: 0; }
+}
+
+/* Background sparkles */
+.fp-sparkle {
+  position: absolute;
+  opacity: 0;
+  animation: fp-twinkle 4.4s ease-in-out infinite;
+  transform: translate(-50%, -50%);
+}
+@keyframes fp-twinkle {
+  0%, 100% { opacity: 0;   transform: translate(-50%, -50%) scale(0.6); }
+  50%      { opacity: 0.6; transform: translate(-50%, -50%) scale(1); }
+}
+
+/* Constellation lines — connect sparkles into a faint star map */
+.fp-constellation line {
+  stroke: #2C2C2C;
+  stroke-width: 0.5;
+  stroke-opacity: 0.13;
+  stroke-dasharray: 1.5 6;
+  stroke-linecap: round;
+}
+
