@@ -11,7 +11,7 @@ export default function Footer() {
         className="text-primary hover:opacity-80 transition-opacity"
         aria-label="Project FUEL"
       >
-        <FuelLogo width={88} />
+        <FuelLogo width={70} />
       </Link>
       <div className="flex items-center gap-2 text-xs">
         <Link

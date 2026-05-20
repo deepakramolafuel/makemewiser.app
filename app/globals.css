@@ -127,34 +127,35 @@ body {
   stroke-dasharray: 3 5;
 }
 
-/* Wake — a short visible segment that follows the crane along the path.
-   The total path length is roughly 1700 units; we show ~120u and chase
-   the rest. Animation duration matches the crane's CYCLE (24s). */
+/* Wake — a short flight ribbon, ~60 units, trailing just behind the plane.
+   Leading edge tracks the plane; tail wisps off behind. 24s matches plane CYCLE. */
 .fp-wake {
   stroke: #2C2C2C;
-  stroke-opacity: 0.55;
+  stroke-opacity: 0.7;
   stroke-width: 1.6;
   fill: none;
   stroke-linecap: round;
-  stroke-dasharray: 120 1700;
+  stroke-dasharray: 60 1700;
   animation: fp-wake-follow 24s linear infinite;
 }
 @keyframes fp-wake-follow {
-  from { stroke-dashoffset: 0; }
-  to   { stroke-dashoffset: -1820; }
+  from { stroke-dashoffset: 60;   }
+  to   { stroke-dashoffset: -1640; }
 }
 
 .fp-waypoint {
   fill: #2C2C2C;
-  opacity: 0.4;
+  opacity: 0.35;
   r: 2.2;
   animation: fp-pulse 24s linear infinite;
 }
+/* Plane reaches each dot at the dot's animationDelay → cycle position 0%.
+   At that instant the dot pops 10% bigger and full-opacity, then fades
+   back into the dashed infinity line over the next ~6% of the cycle. */
 @keyframes fp-pulse {
-  0%, 3%  { r: 2.2; opacity: 0.4; }
-  7%      { r: 4;   opacity: 1; }
-  14%     { r: 2.2; opacity: 0.4; }
-  100%    { r: 2.2; opacity: 0.4; }
+  0%   { r: 2.42; opacity: 1; }
+  6%   { r: 2.2;  opacity: 0.35; }
+  100% { r: 2.2;  opacity: 0.35; }
 }
 
 .fp-crane {
@@ -213,11 +214,11 @@ body {
   letter-spacing: 0.02em;
   margin-top: 2px;
 }
-/* Larger offsets — keep cards well clear of the crane on the loop */
-.fp-card.side-below { transform: translate(-50%, 44px); }
-.fp-card.side-above { transform: translate(-50%, calc(-100% - 44px)); }
-.fp-card.side-left  { transform: translate(calc(-100% - 44px), -50%); }
-.fp-card.side-right { transform: translate(44px, -50%); }
+/* Generous offsets — cards always sit well clear of the loop and the plane */
+.fp-card.side-below { transform: translate(-50%, 64px); }
+.fp-card.side-above { transform: translate(-50%, calc(-100% - 64px)); }
+.fp-card.side-left  { transform: translate(calc(-100% - 64px), -50%); }
+.fp-card.side-right { transform: translate(64px, -50%); }
 
 @keyframes fp-card-life {
   0%, 2%   { opacity: 0; }
