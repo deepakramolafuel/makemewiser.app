@@ -1,7 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
 
+// Lesson-intake webhook (n8n → Google Sheet). Read from the environment so the
+// URL isn't baked into the public repo. The fallback keeps production working
+// until N8N_WEBHOOK_URL is set in Vercel; once you rotate the webhook in n8n
+// and set that env var, the fallback below can be removed.
 const N8N_WEBHOOK_URL =
+  process.env.N8N_WEBHOOK_URL ||
   "https://wisdommap.app.n8n.cloud/webhook/makemewiser-lesson-intake";
+
+// Optional shared secret. If you enable Header Auth on the n8n webhook node,
+// set the header name to "x-webhook-secret" and put the value in this env var —
+// requests will then carry it and anonymous POSTs get rejected by n8n.
+const N8N_WEBHOOK_SECRET = process.env.N8N_WEBHOOK_SECRET;
 
 function validate(body: Record<string, unknown>): string | null {
   if (!body.person_name || typeof body.person_name !== "string" || body.person_name.trim().length === 0)
@@ -39,9 +49,12 @@ export async function POST(request: NextRequest) {
   }
 
   try {
+    const headers: Record<string, string> = { "Content-Type": "application/json" };
+    if (N8N_WEBHOOK_SECRET) headers["x-webhook-secret"] = N8N_WEBHOOK_SECRET;
+
     const res = await fetch(N8N_WEBHOOK_URL, {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers,
       body: JSON.stringify({
         person_name: (body.person_name as string).trim(),
         person_age: Number(body.person_age),
