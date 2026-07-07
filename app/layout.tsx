@@ -14,10 +14,30 @@ const inter = Inter({
   display: "swap",
 });
 
+const SITE_URL = "https://wiser.projectfuel.in";
+const TITLE = "Make Me Wiser";
+const DESCRIPTION =
+  "Life lessons from real people in 195 countries. Collected over 15 years by Project FUEL.";
+
 export const metadata: Metadata = {
-  title: "Make Me Wiser",
-  description:
-    "Life lessons from real people in 195 countries. Collected over 15 years by Project FUEL.",
+  metadataBase: new URL(SITE_URL),
+  title: TITLE,
+  description: DESCRIPTION,
+  applicationName: TITLE,
+  openGraph: {
+    type: "website",
+    url: SITE_URL,
+    siteName: TITLE,
+    title: TITLE,
+    description: DESCRIPTION,
+    images: [{ url: "/fuel-logo.png", width: 842, height: 595, alt: "Project FUEL" }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: TITLE,
+    description: DESCRIPTION,
+    images: ["/fuel-logo.png"],
+  },
 };
 
 export default function RootLayout({
