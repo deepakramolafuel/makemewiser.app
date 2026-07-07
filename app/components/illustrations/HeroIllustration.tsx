@@ -45,7 +45,6 @@ const FP_CONSTELLATION: { x1: number; y1: number; x2: number; y2: number }[] = [
 const CYCLE = 24;
 
 const FALLBACK_COUNTRIES = ["Japan", "India", "Brazil", "Kenya", "Iceland", "Peru"];
-const FALLBACK_NAMES = ["Aida", "Jiro", "Mateus", "Sara", "Niamh", "Tomás", "Lin", "Kofi"];
 
 function Sparkle({ size, opacity = 1 }: { size: number; opacity?: number }) {
   const r = size / 2;
@@ -71,44 +70,17 @@ function pickRandom<T>(arr: T[], n: number): T[] {
   return shuffled.slice(0, n);
 }
 
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
 
-// One country card. Owns an exclusive chunk of contributor names
-// and rotates through them on each animation iteration.
+// One country label that blooms at a waypoint as the plane passes.
 function CountryCard({
   waypoint,
   country,
-  names,
-  slotIndex,
-  totalSlots,
   delay,
 }: {
   waypoint: { x: number; y: number; side: Side };
   country: string;
-  names: string[];
-  slotIndex: number;
-  totalSlots: number;
   delay: number;
 }) {
-  const chunkSize = Math.max(1, Math.floor(names.length / totalSlots));
-  const start = slotIndex * chunkSize;
-  const myNames = names.slice(start, start + chunkSize);
-  const safeNames = myNames.length
-    ? myNames
-    : names.length
-      ? [names[slotIndex % names.length]]
-      : [""];
-
-  const [iter, setIter] = useState(0);
-  const person = safeNames[iter % safeNames.length];
-
   return (
     <div
       className={`fp-card side-${waypoint.side}`}
@@ -117,11 +89,9 @@ function CountryCard({
         top: `${(waypoint.y / 500) * 100}%`,
         animationDelay: `${delay}s`,
       }}
-      onAnimationIteration={() => setIter((i) => i + 1)}
     >
       <div className="fp-card-inner">
         <div className="fp-card-country">{country}</div>
-        <div className="fp-card-person">— {person}</div>
       </div>
     </div>
   );
@@ -129,7 +99,6 @@ function CountryCard({
 
 export default function HeroIllustration() {
   const [countries, setCountries] = useState<string[]>(FALLBACK_COUNTRIES);
-  const [names, setNames] = useState<string[]>(FALLBACK_NAMES);
 
   useEffect(() => {
     let cancelled = false;
@@ -139,14 +108,6 @@ export default function HeroIllustration() {
       .then((data: { countries?: string[] }) => {
         if (cancelled || !data.countries?.length) return;
         setCountries(pickRandom(data.countries, FP_WAYPOINTS.length));
-      })
-      .catch(() => {});
-
-    fetch("/api/contributors")
-      .then((r) => r.json())
-      .then((data: { names?: string[] }) => {
-        if (cancelled || !data.names?.length) return;
-        setNames(shuffle(data.names));
       })
       .catch(() => {});
 
@@ -192,9 +153,6 @@ export default function HeroIllustration() {
           key={i}
           waypoint={p}
           country={countryLabels[i]}
-          names={names}
-          slotIndex={i}
-          totalSlots={FP_WAYPOINTS.length}
           delay={(i * CYCLE) / FP_WAYPOINTS.length}
         />
       ))}
