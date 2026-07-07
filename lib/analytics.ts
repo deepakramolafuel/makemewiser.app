@@ -5,7 +5,15 @@
 import { track as vercelTrack } from "@vercel/analytics";
 import posthog from "posthog-js";
 
-const PH_ENABLED = !!process.env.NEXT_PUBLIC_POSTHOG_KEY;
+// PostHog project API key is publishable (safe in the browser bundle), so we
+// bake it in as the default and let an env var override it if ever needed.
+export const POSTHOG_KEY =
+  process.env.NEXT_PUBLIC_POSTHOG_KEY ||
+  "phc_BLXpUA5NXS3MnCUCvtpofwfxd6mVL7jH5sq6mLfpR9Uy";
+export const POSTHOG_HOST =
+  process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://us.i.posthog.com";
+
+const PH_ENABLED = !!POSTHOG_KEY;
 
 type Props = Record<string, string | number | boolean>;
 
