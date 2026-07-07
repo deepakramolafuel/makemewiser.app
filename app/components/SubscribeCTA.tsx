@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { track } from "@vercel/analytics";
+import { track, identify } from "@/lib/analytics";
 
 const SUBSTACK = "https://5minsoffuel.substack.com";
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -30,6 +30,7 @@ export default function SubscribeCTA() {
       const data = await res.json().catch(() => ({}));
 
       if (data?.ok) {
+        identify(value);
         track("subscribed", { via: "inline" });
         setState("done");
         return;
@@ -38,6 +39,7 @@ export default function SubscribeCTA() {
       // Substack needs a captcha or the proxy failed — open the hosted page
       // with the email prefilled so the reader finishes in one click.
       if (data?.fallback) {
+        identify(value);
         track("subscribed", { via: "fallback" });
         window.open(
           `${SUBSTACK}/subscribe?email=${encodeURIComponent(value)}`,
@@ -50,6 +52,7 @@ export default function SubscribeCTA() {
 
       setState("error");
     } catch {
+      identify(value);
       track("subscribed", { via: "fallback" });
       window.open(
         `${SUBSTACK}/subscribe?email=${encodeURIComponent(value)}`,

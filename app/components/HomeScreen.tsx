@@ -12,7 +12,7 @@ import { useRateLimit } from "@/hooks/useRateLimit";
 import { useSessionLessons } from "@/hooks/useSessionLessons";
 import { getRandomLesson } from "@/lib/api";
 import type { LessonResponse } from "@/lib/types";
-import { track } from "@vercel/analytics";
+import { track } from "@/lib/analytics";
 
 type View = "home" | "travelling" | "lesson" | "submit";
 
