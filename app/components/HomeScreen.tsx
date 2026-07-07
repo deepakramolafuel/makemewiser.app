@@ -12,6 +12,7 @@ import { useRateLimit } from "@/hooks/useRateLimit";
 import { useSessionLessons } from "@/hooks/useSessionLessons";
 import { getRandomLesson } from "@/lib/api";
 import type { LessonResponse } from "@/lib/types";
+import { track } from "@vercel/analytics";
 
 type View = "home" | "travelling" | "lesson" | "submit";
 
@@ -81,6 +82,7 @@ export default function HomeScreen() {
   }, [isLimited, seenIds, markSeen, recordTap]);
 
   function handleMakeWiser() {
+    track("make_me_wiser");
     fetchLesson();
   }
 
@@ -126,7 +128,7 @@ export default function HomeScreen() {
                   {loading ? "Finding..." : "Make me wiser"}
                 </button>
                 <button
-                  onClick={() => setView("submit")}
+                  onClick={() => { track("share_lesson_open"); setView("submit"); }}
                   className="flex-1 max-w-[200px] py-3.5 border border-primary text-primary text-sm tracking-wide hover:bg-primary hover:text-cream transition-colors whitespace-nowrap"
                 >
                   Share my lesson

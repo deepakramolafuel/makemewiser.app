@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { track } from "@vercel/analytics";
 import { COUNTRIES } from "@/lib/countries";
 import { submitLesson } from "@/lib/api";
 import ConfirmationScreen from "./ConfirmationScreen";
@@ -59,6 +60,7 @@ export default function SubmitLessonForm({ onMakeWiser, onBack }: SubmitLessonFo
       return;
     }
 
+    track("lesson_submitted", { country: form.country });
     setConfirmed({ totalContributors: result.total_contributors ?? 1 });
   }
 

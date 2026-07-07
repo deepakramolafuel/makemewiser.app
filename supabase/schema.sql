@@ -189,3 +189,25 @@ CREATE POLICY "insert_reports" ON reports
 -- Favourites table is touched only by service-role RPC; no anon access
 CREATE POLICY "service_only_favourites" ON favourites
   FOR ALL USING (auth.role() = 'service_role');
+
+-- ============================================================
+-- SUBSCRIBERS TABLE
+-- Newsletter signups captured before forwarding to Substack, so we keep
+-- a subscriber count we own. Written only by the /api/subscribe service route.
+-- ============================================================
+CREATE TABLE IF NOT EXISTS subscribers (
+  id               uuid        PRIMARY KEY DEFAULT gen_random_uuid(),
+  email            text        NOT NULL UNIQUE,
+  source           text,
+  referrer         text,
+  substack_status  text        NOT NULL DEFAULT 'pending',
+  created_at       timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE INDEX IF NOT EXISTS idx_subscribers_created ON subscribers (created_at);
+
+ALTER TABLE subscribers ENABLE ROW LEVEL SECURITY;
+
+DROP POLICY IF EXISTS "service_only_subscribers" ON subscribers;
+CREATE POLICY "service_only_subscribers" ON subscribers
+  FOR ALL USING (auth.role() = 'service_role');
