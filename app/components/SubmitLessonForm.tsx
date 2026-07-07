@@ -16,7 +16,7 @@ export default function SubmitLessonForm({ onMakeWiser, onBack }: SubmitLessonFo
   const [countryOpen, setCountryOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [confirmed, setConfirmed] = useState<{ totalContributors: number } | null>(null);
+  const [confirmed, setConfirmed] = useState(false);
 
   const [form, setForm] = useState({
     person_name: "",
@@ -61,16 +61,15 @@ export default function SubmitLessonForm({ onMakeWiser, onBack }: SubmitLessonFo
     }
 
     track("lesson_submitted", { country: form.country });
-    setConfirmed({ totalContributors: result.total_contributors ?? 1 });
+    setConfirmed(true);
   }
 
   if (confirmed) {
     return (
       <ConfirmationScreen
-        totalContributors={confirmed.totalContributors}
         onMakeWiser={onMakeWiser}
         onShareAnother={() => {
-          setConfirmed(null);
+          setConfirmed(false);
           setForm({ person_name: "", person_age: "", country: "", life_lesson: "", story: "" });
           setCountrySearch("");
         }}
