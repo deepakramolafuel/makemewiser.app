@@ -49,12 +49,12 @@ export default function AboutPage() {
           <p>
             Follow along on Instagram —{" "}
             <a
-              href="https://instagram.com/projectfuelorg"
+              href="https://instagram.com/projectfuel"
               target="_blank"
               rel="noopener noreferrer"
               className="underline underline-offset-2 hover:text-secondary transition-colors"
             >
-              @projectfuelorg
+              @projectfuel
             </a>
           </p>
         </div>
