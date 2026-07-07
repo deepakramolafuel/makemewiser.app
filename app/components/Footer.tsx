@@ -1,9 +1,16 @@
 import Link from "next/link";
 import FuelLogo from "./FuelLogo";
+import SubscribeCTA from "./SubscribeCTA";
 
 export default function Footer() {
   return (
-    <footer className="mt-auto pt-10 pb-6 flex flex-col items-center gap-3 text-center text-sm text-secondary">
+    <footer className="mt-auto w-full pt-10 pb-6 flex flex-col items-center gap-6 text-center text-sm text-secondary">
+      {/* Newsletter subscribe — gentle nudge toward the Substack */}
+      <SubscribeCTA />
+
+      {/* Hairline divider */}
+      <div className="w-16 border-t border-card-border" />
+
       <Link
         href="https://www.projectfuel.in"
         target="_blank"
